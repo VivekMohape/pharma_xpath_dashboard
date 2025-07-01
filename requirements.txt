@@ -1,0 +1,6 @@
+streamlit
+openai
+instructor
+pydantic==1.10.13
+beautifulsoup4
+lxml
