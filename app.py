@@ -4,8 +4,8 @@ import os
 from utils import (
     clean_html_for_llm,
     generate_selectors,
-    extract_values_from_html,
-    configure_langsmith_tracing
+    extract_values_from_html
+    #configure_langsmith_tracing
 )
 
 st.set_page_config(page_title="Pharma XPath Validator", layout="wide")
@@ -19,7 +19,7 @@ if not openai_key:
     st.stop()
 
 # LangSmith is configured using ENV
-configure_langsmith_tracing()
+#configure_langsmith_tracing()
 
 # Load HTML
 html_dir = "html"
