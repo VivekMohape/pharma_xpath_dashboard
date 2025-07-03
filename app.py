@@ -34,16 +34,12 @@ with col2:
     st.markdown(f"**Title:** {extracted['title']}")
     st.markdown(f"**Date:** {extracted['date']}")
     st.markdown("**Content Preview:**")
-    st.markdown("**Content Preview:**")
-st.text_area(
-    label="Full Content",
-    value=extracted["content"],
-    height=400,
-    disabled=True
-)
-
-
-
+    st.text_area(
+        label="Full Content",
+        value=extracted["content"],
+        height=400,
+        disabled=True
+    )
 
 with st.expander(" XPath Selectors (Editable)"):
     title_sel = st.text_input("Title Selector", selectors.title_selector)
