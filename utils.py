@@ -4,6 +4,7 @@ from lxml import html
 from instructor import from_openai
 from pydantic import BaseModel, Field
 import openai
+from langchain_core.tracers import traceable
 
 # Structured schema for LLM output
 class SelectorSchema(BaseModel):
@@ -25,6 +26,7 @@ def clean_html_for_llm(html_str: str) -> str:
 
     return soup.prettify()[:12000]
 
+@traceable(name="Generate XPaths from HTML", project_name="pharma-xpath-validator")
 def generate_selectors(cleaned_html: str, api_key: str) -> SelectorSchema:
     client = from_openai(openai.OpenAI(api_key=api_key))
     prompt = f"""You are a scraping expert. Given this cleaned HTML, extract the most accurate XPath selectors for:
