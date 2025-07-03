@@ -4,7 +4,8 @@ from lxml import html
 from instructor import from_openai
 from pydantic import BaseModel, Field
 import openai
-from langchain_core.tracers import traceable
+from langsmith import traceable  
+
 
 # Structured schema for LLM output
 class SelectorSchema(BaseModel):
