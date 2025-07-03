@@ -5,7 +5,8 @@ from lxml import html
 from instructor import from_openai
 from pydantic import BaseModel, Field
 import openai
-from langsmith.trace import traceable
+from langsmith.wrappers import traceable
+
 
 
 # Structured schema for output
