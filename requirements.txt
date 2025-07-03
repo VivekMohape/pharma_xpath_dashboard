@@ -1,9 +1,8 @@
-streamlit
 openai
 instructor
 pydantic
-beautifulsoup4
 lxml
-langchain
-langchain-core
-
+beautifulsoup4
+streamlit
+langsmith
+python-dotenv
