@@ -5,7 +5,7 @@ from lxml import html
 from instructor import from_openai
 from pydantic import BaseModel, Field
 import openai
-from langsmith.wrappers import traceable
+#from langsmith.wrappers import traceable
 
 
 
@@ -16,10 +16,10 @@ class SelectorSchema(BaseModel):
     date_format_pattern: str = Field(..., description="Datetime format string")
     content_selector: str = Field(..., description="XPath selector for the content")
 
-def configure_langsmith_tracing():
+'''def configure_langsmith_tracing():
     os.environ["LANGCHAIN_PROJECT"] = os.getenv("LANGCHAIN_PROJECT", "pharma_xpath_validator")
     os.environ["LANGCHAIN_ENDPOINT"] = os.getenv("LANGCHAIN_ENDPOINT", "https://api.smith.langchain.com")
-    os.environ["LANGCHAIN_API_KEY"] = os.getenv("LANGCHAIN_API_KEY")  # Set in .env or system env
+    os.environ["LANGCHAIN_API_KEY"] = os.getenv("LANGCHAIN_API_KEY")  # Set in .env or system env'''
 
 # Clean HTML using BeautifulSoup
 def clean_html_for_llm(html_str: str) -> str:
