@@ -5,7 +5,7 @@ import json
 from utils import clean_html_for_llm, generate_selectors, extract_values_from_html
 import os
 
-os.environ["LANGCHAIN_API_KEY"] = "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" 
+os.environ["LANGCHAIN_API_KEY"] = "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" 
 os.environ["LANGCHAIN_TRACING_V2"] = "true"
 os.environ["LANGCHAIN_PROJECT"] = "pharma-xpath-validator"  
 
