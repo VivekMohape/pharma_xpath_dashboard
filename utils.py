@@ -36,7 +36,7 @@ def clean_html_for_llm(html_str: str) -> str:
 # Generate selectors with Instructor + LangSmith trace
 @traceable(name="Generate XPaths from HTML", project_name="pharma_xpath_validator")
 def generate_selectors(cleaned_html: str, api_key: str) -> SelectorSchema:
-    client = from_openai(openai.OpenAI(api_key=api_key))
+    client = from_openai(openai.OpenAI(api_key=api_key),tracing=True)
 
     prompt = f"""You are a scraping expert. Given this cleaned HTML, extract the most accurate XPath selectors for:
 1. The main article title
