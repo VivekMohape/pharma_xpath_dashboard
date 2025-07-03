@@ -1,44 +1,56 @@
 import re
+import os
 from bs4 import BeautifulSoup, Comment
 from lxml import html
-from pydantic import BaseModel, Field
 from instructor import from_openai
-from openai import OpenAI
-from langsmith import wrappers
+from pydantic import BaseModel, Field
+import openai
+from langchain_core.tracers import traceable
 
+# Structured schema for output
 class SelectorSchema(BaseModel):
     title_selector: str = Field(..., description="XPath selector for the title")
-    date_selector: str = Field(..., description="XPath selector for the date")
-    date_format_pattern: str = Field(..., description="Date format")
-    content_selector: str = Field(..., description="XPath selector for the article content")
+    date_selector: str = Field(..., description="XPath selector for the publication date")
+    date_format_pattern: str = Field(..., description="Datetime format string")
+    content_selector: str = Field(..., description="XPath selector for the content")
 
+def configure_langsmith_tracing():
+    os.environ["LANGCHAIN_PROJECT"] = os.getenv("LANGCHAIN_PROJECT", "pharma_xpath_validator")
+    os.environ["LANGCHAIN_ENDPOINT"] = os.getenv("LANGCHAIN_ENDPOINT", "https://api.smith.langchain.com")
+    os.environ["LANGCHAIN_API_KEY"] = os.getenv("LANGCHAIN_API_KEY")  # Set in .env or system env
+
+# Clean HTML using BeautifulSoup
 def clean_html_for_llm(html_str: str) -> str:
     soup = BeautifulSoup(html_str, "html.parser")
 
-    # Remove unwanted tags
+    # Remove noisy tags
     for tag in soup(["script", "style", "header", "footer", "nav", "aside"]):
         tag.decompose()
 
-    # Remove HTML comments
+    # Remove comments
     for comment in soup.find_all(string=lambda text: isinstance(text, Comment)):
         comment.extract()
 
-    return soup.prettify()[:12000]
+    return soup.prettify()[:12000]  # LLM context size limit
 
-def generate_selectors(cleaned_html: str) -> SelectorSchema:
-    client = wrappers.wrap_openai(OpenAI())
-    client = from_openai(client)
+# Generate selectors with Instructor + LangSmith trace
+@traceable(name="Generate XPaths from HTML", project_name="pharma_xpath_validator")
+def generate_selectors(cleaned_html: str, api_key: str) -> SelectorSchema:
+    client = from_openai(openai.OpenAI(api_key=api_key))
 
-    prompt = f"""
-    You are a web scraping expert. Given this cleaned HTML, extract valid XPath selectors for:
-    - title_selector
-    - date_selector
-    - date_format_pattern
-    - content_selector
-    
-    Cleaned HTML:
-    {cleaned_html}
-    """
+    prompt = f"""You are a scraping expert. Given this cleaned HTML, extract the most accurate XPath selectors for:
+1. The main article title
+2. The publication date
+3. The body/content of the article
+
+Return them in JSON format using these keys:
+- `title_selector`
+- `date_selector`
+- `date_format_pattern`
+- `content_selector`
+
+Cleaned HTML:
+{cleaned_html}"""
 
     return client.chat.completions.create(
         model="gpt-4o",
@@ -46,6 +58,7 @@ def generate_selectors(cleaned_html: str) -> SelectorSchema:
         response_model=SelectorSchema
     )
 
+# Use XPath to extract values
 def extract_values_from_html(html_str: str, selectors: SelectorSchema):
     tree = html.fromstring(html_str)
 
