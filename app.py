@@ -5,9 +5,11 @@ import json
 from utils import clean_html_for_llm, generate_selectors, extract_values_from_html
 import os
 
-os.environ["LANGCHAIN_API_KEY"] = "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" 
-os.environ["LANGCHAIN_TRACING_V2"] = "true"
-os.environ["LANGCHAIN_PROJECT"] = "pharma-xpath-validator"  
+LANGSMITH_TRACING=true
+LANGSMITH_ENDPOINT="https://api.smith.langchain.com"
+LANGSMITH_API_KEY="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"
+LANGSMITH_PROJECT="pharma-xpath"
+
 
 
 st.set_page_config(page_title="Pharma XPath Validator", layout="wide")
