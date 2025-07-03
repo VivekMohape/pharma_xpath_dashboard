@@ -1,8 +1,9 @@
+streamlit
 openai
 instructor
 pydantic
-lxml
 beautifulsoup4
-streamlit
+lxml
 langsmith
 python-dotenv
+
