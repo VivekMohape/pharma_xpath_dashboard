@@ -1,25 +1,25 @@
 import streamlit as st
-from lxml import html
 import os
-import json
+from dotenv import load_dotenv
 from utils import clean_html_for_llm, generate_selectors, extract_values_from_html
-import os
-
-LANGSMITH_TRACING=True
-LANGSMITH_ENDPOINT="https://api.smith.langchain.com"
-LANGSMITH_API_KEY="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"
-LANGSMITH_PROJECT="pharma-xpath"
-
-
 
 st.set_page_config(page_title="Pharma XPath Validator", layout="wide")
-st.title(" Pharma News Parser Validator")
+st.title("Pharma News Parser Validator")
 
+# Load environment variables
+load_dotenv()
+
+# Let user input OpenAI key
 api_key = st.text_input("Enter your OpenAI API Key", type="password")
 
-if not api_key:
-    st.warning("Please enter your OpenAI API key to continue.")
+if api_key:
+    os.environ["OPENAI_API_KEY"] = api_key  # For LangSmith + OpenAI SDK
+elif not os.getenv("OPENAI_API_KEY"):
+    st.warning("Please enter your OpenAI API key or set it in the .env file")
     st.stop()
+
+# Set LangSmith project name (either from env or default)
+os.environ["LANGCHAIN_PROJECT"] = os.getenv("LANGCHAIN_PROJECT", "pharma_xpath_validator")
 
 html_dir = "html"
 html_files = sorted([f for f in os.listdir(html_dir) if f.endswith(".html")])
@@ -30,30 +30,25 @@ with open(file_path, "r", encoding="utf-8") as f:
     raw_html = f.read()
 
 cleaned = clean_html_for_llm(raw_html)
-selectors = generate_selectors(cleaned, api_key)
+selectors = generate_selectors(cleaned)
 extracted = extract_values_from_html(raw_html, selectors)
 
 col1, col2 = st.columns(2)
 with col1:
-    st.subheader(" Raw HTML (truncated)")
+    st.subheader("Raw HTML (truncated)")
     st.code(raw_html[:5000], language="html")
 with col2:
-    st.subheader(" Extracted Output")
+    st.subheader("Extracted Output")
     st.markdown(f"**Title:** {extracted['title']}")
     st.markdown(f"**Date:** {extracted['date']}")
     st.markdown("**Content Preview:**")
-    st.text_area(
-        label="Full Content",
-        value=extracted["content"],
-        height=400,
-        disabled=True
-    )
+    st.text_area("Full Content", value=extracted["content"], height=400, disabled=True)
 
-with st.expander(" XPath Selectors (Editable)"):
+with st.expander("XPath Selectors (Editable)"):
     title_sel = st.text_input("Title Selector", selectors.title_selector)
     date_sel = st.text_input("Date Selector", selectors.date_selector)
     content_sel = st.text_area("Content Selector", selectors.content_selector)
-    save = st.button(" Approve and Save")
+    save = st.button("Approve and Save")
 
     if save:
-        st.success(" Selectors approved and saved (not implemented yet).")
+        st.success("Selectors approved and saved (not implemented yet).")
