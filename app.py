@@ -3,6 +3,12 @@ from lxml import html
 import os
 import json
 from utils import clean_html_for_llm, generate_selectors, extract_values_from_html
+import os
+
+os.environ["LANGCHAIN_API_KEY"] = "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" 
+os.environ["LANGCHAIN_TRACING_V2"] = "true"
+os.environ["LANGCHAIN_PROJECT"] = "pharma-xpath-validator"  
+
 
 st.set_page_config(page_title="Pharma XPath Validator", layout="wide")
 st.title(" Pharma News Parser Validator")
