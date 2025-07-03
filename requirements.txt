@@ -4,6 +4,6 @@ instructor
 pydantic
 beautifulsoup4
 lxml
-langsmith
 python-dotenv
+langsmith
 
