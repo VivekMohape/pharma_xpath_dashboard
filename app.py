@@ -33,7 +33,12 @@ with col2:
     st.subheader(" Extracted Output")
     st.markdown(f"**Title:** {extracted['title']}")
     st.markdown(f"**Date:** {extracted['date']}")
-    st.markdown(f"**Content Preview:**\n\n{extracted['content'][:1000]}...")
+    st.markdown("**Content Preview:**")
+
+    max_len = len(extracted['content'])
+    preview_len = st.slider("Preview Length (characters)", min_value=100, max_value=max_len, value=600, step=100)
+    st.text_area("Content", extracted["content"][:preview_len], height=300)
+
 
 with st.expander(" XPath Selectors (Editable)"):
     title_sel = st.text_input("Title Selector", selectors.title_selector)
