@@ -4,3 +4,4 @@ instructor
 pydantic
 beautifulsoup4
 lxml
+langchain
